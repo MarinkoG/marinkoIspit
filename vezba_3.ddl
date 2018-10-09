@@ -1,7 +1,6 @@
 drop schema if exists vezba3;
 create schema vezba3 default character set utf8 default collate utf8_unicode_ci;
 use vezba3;
-
 CREATE TABLE STUDENT
 (
 	BrojIndeksa           VARCHAR(20) NOT NULL,
@@ -66,13 +65,14 @@ CREATE TABLE KOMISIJSKI
 (
 	BrojIndeksa           VARCHAR(20) NOT NULL,
 	DatumIspita           DATE NOT NULL,
-	JMB                   VARCHAR(20) NOT NULL,
+	PrviClan                   VARCHAR(20) NOT NULL,
+    DrugiClan                   VARCHAR(20) NOT NULL,
 	Sifra                 VARCHAR(20) NOT NULL,
 	 PRIMARY KEY (BrojIndeksa,DatumIspita,Sifra),
      FOREIGN KEY (BrojIndeksa,DatumIspita,Sifra) REFERENCES POLAZE(BrojIndeksa,DatumIspita,Sifra)
 		ON DELETE CASCADE,
-	FOREIGN KEY PRVI_CLAN (JMB) REFERENCES NASTAVNIK(JMB),
-	FOREIGN KEY DRUGI_CLAN (JMB) REFERENCES NASTAVNIK(JMB)
+	FOREIGN KEY PRVI_CLAN (PrviClan) REFERENCES NASTAVNIK(JMB),
+	FOREIGN KEY DRUGI_CLAN (DrugiClan) REFERENCES NASTAVNIK(JMB)
 )
 ;
 
