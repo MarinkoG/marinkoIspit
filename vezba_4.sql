@@ -22,7 +22,13 @@ INSERT INTO `vezba3`.`polaze` (`BrojIndeksa`, `DatumIspita`, `Sifra`) VALUES ('1
 
 INSERT INTO `vezba3`.`komisijski` (`BrojIndeksa`, `DatumIspita`, `PrviClan`, `DrugiClan`, `Sifra`) VALUES ('25/18', '2017-01-01', '123', '2', '3');
 
+UPDATE `vezba3`.`polaze` SET `Ocena` = '5' WHERE (`BrojIndeksa` = '1/18') and (`DatumIspita` = '2018-05-02') and (`Sifra` = '1');
+UPDATE `vezba3`.`polaze` SET `Ocena` = '6' WHERE (`BrojIndeksa` = '25/18') and (`DatumIspita` = '2017-01-01') and (`Sifra` = '3');
+INSERT INTO `vezba3`.`polaze` (`Ocena`, `BrojIndeksa`, `DatumIspita`, `Sifra`) VALUES ('8', '1/18', '2018-06-02', '2');
+
 
 SELECT count(*) from nastavnik n inner join student s on substring(n.Ime,1,1)=substring(s.Ime,1,1) and substring(n.Prezime,1,1)=substring(s.Prezime,1,1);
 
-SELECT  n.Ime,n.Prezime, count(*) as Broj from  nastavnik n inner join komisijski k on k.PrviClan=n.JMB or k.DrugiClan = n.JMB order by n.Ime;
+SELECT  n.Ime,n.Prezime, count(*) as Broj from  nastavnik n inner join komisijski k on k.PrviClan=n.JMB or k.DrugiClan = n.JMB group by n.Ime;
+
+SELECT BrojIndeksa, Prezime, Ime, AVG(select * from )
