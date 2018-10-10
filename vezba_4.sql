@@ -31,4 +31,20 @@ SELECT count(*) from nastavnik n inner join student s on substring(n.Ime,1,1)=su
 
 SELECT  n.Ime,n.Prezime, count(*) as Broj from  nastavnik n inner join komisijski k on k.PrviClan=n.JMB or k.DrugiClan = n.JMB group by n.Ime;
 
-SELECT BrojIndeksa, Prezime, Ime, AVG(select * from )
+SELECT student.BrojIndeksa, student.Prezime, student.Ime, AVG(Ocena) as ProsjekOcjena , SUM(ECTS) as Bodovi from student  inner join polaze  on student.BrojIndeksa=polaze.BrojIndeksa inner join predmet on polaze.Sifra= predmet.Sifra group by BrojIndeksa;
+
+create index predmetNaziv on predmet
+(
+	Naziv
+);
+
+ALTER table ispit add Izaslo integer NULL;
+ALTER table ispit add Polozilo integer Null;
+
+create trigger updateIspit after insert on polaze 
+for each row
+update ispit
+set Izaslo = Izaslo+1, 
+Polozilo = Polozilo+1 where ispit.Sifra=new.Sifra;
+
+
