@@ -1,4 +1,4 @@
-SELECT * FROM vezba3.student;
+use vezba3;
 INSERT INTO `vezba3`.`student` (`BrojIndeksa`, `Ime`, `Prezime`) VALUES ('98/5', 'Goran', 'Banjac');
 INSERT INTO `vezba3`.`student` (`BrojIndeksa`, `Ime`, `Prezime`) VALUES ('1/18', 'Nikola', 'Nikolovic');
 INSERT INTO `vezba3`.`student` (`BrojIndeksa`, `Ime`, `Prezime`) VALUES ('25/18', 'Petar', 'Petrovic');
@@ -19,12 +19,15 @@ INSERT INTO `vezba3`.`ispit` (`DatumIspita`, `JMB`, `Sifra`) VALUES ('2017-01-01
 INSERT INTO `vezba3`.`student` (`BrojIndeksa`, `Ime`, `Prezime`) VALUES ('56/15', 'Nenad', 'Student');
 INSERT INTO `vezba3`.`polaze` (`BrojIndeksa`, `DatumIspita`, `Sifra`) VALUES ('25/18', '2017-01-01', '3');
 INSERT INTO `vezba3`.`polaze` (`BrojIndeksa`, `DatumIspita`, `Sifra`) VALUES ('1/18', '2018-05-02', '1');
+INSERT INTO `vezba3`.`polaze` (`Ocena`, `BrojIndeksa`, `DatumIspita`, `Sifra`) VALUES ('8', '1/18', '2018-06-02', '2');
+INSERT INTO `vezba3`.`polaze` (`Ocena`, `BrojIndeksa`, `DatumIspita`, `Sifra`) VALUES ('5', '56/15', '2018-06-02', '2');
 
 INSERT INTO `vezba3`.`komisijski` (`BrojIndeksa`, `DatumIspita`, `PrviClan`, `DrugiClan`, `Sifra`) VALUES ('25/18', '2017-01-01', '123', '2', '3');
+INSERT INTO `vezba3`.`komisijski` (`BrojIndeksa`, `DatumIspita`, `PrviClan`, `DrugiClan`, `Sifra`) VALUES ('56/15', '2018-06-02', '2', '5', '2');
+
 
 UPDATE `vezba3`.`polaze` SET `Ocena` = '5' WHERE (`BrojIndeksa` = '1/18') and (`DatumIspita` = '2018-05-02') and (`Sifra` = '1');
 UPDATE `vezba3`.`polaze` SET `Ocena` = '6' WHERE (`BrojIndeksa` = '25/18') and (`DatumIspita` = '2017-01-01') and (`Sifra` = '3');
-INSERT INTO `vezba3`.`polaze` (`Ocena`, `BrojIndeksa`, `DatumIspita`, `Sifra`) VALUES ('8', '1/18', '2018-06-02', '2');
 
 
 SELECT count(*) from nastavnik n inner join student s on substring(n.Ime,1,1)=substring(s.Ime,1,1) and substring(n.Prezime,1,1)=substring(s.Prezime,1,1);
@@ -38,13 +41,24 @@ create index predmetNaziv on predmet
 	Naziv
 );
 
-ALTER table ispit add Izaslo integer NULL;
-ALTER table ispit add Polozilo integer Null;
+ALTER table ispit add Izaslo integer Not NULL;
+ALTER table ispit add Polozilo integer Not Null;
 
 create trigger updateIspit after insert on polaze 
 for each row
 update ispit
-set Izaslo = Izaslo+1, 
+set Izaslo = ifnull(Izaslo,0)+1, 
 Polozilo = Polozilo+1 where ispit.Sifra=new.Sifra;
 
-
+delimiter //
+create procedure prijavi (in komisijski Integer, in BrojIndeksa varchar(20), in Sifra Integer, in Ocena varchar(20), in DatumIspita date, in PrviClan Varchar(20), in DrugiClan Varchar(20), out res Integer)
+begin
+set res =(select count(*) from polaze p where p.Ocena>5 and p.BrojIndeksa=BrojIndeksa and p.Sifra=Sifra);
+if res < 1 then
+insert into polaze(Ocena, BrojIndeksa, DatumIspita, Sifra) values(Ocena, BrojIndeksa, DatumIspita, Sifra);
+if komisijski>0 then
+insert into komisijski(BrojIndeksa, DatumIspita, PrviClan, DrugiClan, Sifra) values(BrojIndeksa, DatumIspita, PrviClan, DrugiClan, Sifra);
+end if;
+end if;
+end //
+delimiter ;
