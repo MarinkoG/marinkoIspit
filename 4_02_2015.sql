@@ -48,6 +48,7 @@ CREATE TABLE UPLATA(
 CREATE TABLE RACUN_STAVKA(
 	BrojRacuna VARCHAR(20) NOT NULL,
     Sifra VARCHAR(20) NOT NULL,
+    Kolicina Integer Not null,
     primary key(BrojRacuna, Sifra),
     foreign key R_RS(BrojRacuna) references RACUN(BrojRacuna),
     foreign key ROB_RS(BrojRacuna) references RACUN(BrojRacuna)
